@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f compose.yaml
+    kompose.version: 1.33.0 (3ce457399)
+  labels:
+    io.kompose.service: student-rep
+  name: student-rep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: student-rep
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml
+        kompose.version: 1.33.0 (3ce457399)
+      labels:
+        io.kompose.network/asid-my-db-network: "true"
+        io.kompose.service: student-rep
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              value: school_db
+            - name: MYSQL_PASSWORD
+              value: paswword
+            - name: MYSQL_ROOT_PASSWORD
+              value: "12345"
+            - name: MYSQL_USER
+              value: user
+          image: mysql:latest
+          name: student-rep
+          ports:
+            - containerPort: 3306
+              hostPort: 3307
+              protocol: TCP
+      restartPolicy: Always
